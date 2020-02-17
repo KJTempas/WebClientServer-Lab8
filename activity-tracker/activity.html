@@ -53,6 +53,17 @@
                         <label class="form-check-label" for="v1">Digital</label>
                     </div>
 
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="note">Add notes about the session</label>
+                        <input id="note" class="form-control">
+                    </div>
+
+                    <div class="form-check-inline">
+                        <input id="complete" class="form-check-input" type="checkbox"v-model="activity.completed">
+                        <label class="form-check-label" for="complete">Completed</label>
+                    </div>
+
                     <div>
                         <button class="btn btn-primary mt-2" type="button" v-on:click="submit">Add record</button>
                     </div>
@@ -74,12 +85,17 @@
                             <th>How long?</th>
                             <th>Type</th>
                             <th>Digital or traditional?</th>
+                            <th>Note</th>
+                            <th>Completed</th>
                         </tr>
                         <tr v-for="record in activityRecords">
                             <td>{{ record.when | shortDateFormat }}</td>
-                            <td>{{ record.howLong }}</td>
+                            <td>{{ record.howLong  | decimalPlaces(2) }}</td>
                             <td>{{ record.type }}</td>
                             <td>{{ record.digitalTraditional }}</td>
+                            <td>{{ record.note  | truncate(40, '...') }}</td>
+                           <!-- {{ text | truncate(10, '...') }}-->
+                            <td>{{ record. completed }}</td>
                         </tr>
                     </table>
                 </div>
@@ -92,11 +108,11 @@
 
             <div class="card-body">
                 <!-- Computed property -->
-                <p>You have practiced a total of {{ totalHours }} hours, broken down as follows:</p>
+                <p>You have practiced a total of {{ totalHours | decimalPlaces(2) }} hours, broken down as follows:</p>
                 
                 <!-- total for each type  -->
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item" v-for="hours, type in totalHoursByType">{{ type }}: {{ hours }}</li>
+                    <li class="list-group-item" v-for="hours, type in totalHoursByType">{{ type }}: {{ hours | decimalPlaces(2) }}</li>
                 </ul>
             </div>
         </div>
@@ -117,6 +133,8 @@
                 types: ['sketching', 'drawing', 'painting'],    // replace with appropriate options for your activity e.g. for video game, ['PC', 'PlayStation', 'Xbox' ]
                 digital: 'digital',          // on a computer, tablet                // replace with appropriate options for your activity e.g. for video games, single player and multi player 
                 traditional: 'traditional',   // painting, drawing etc. on paper
+                notes: '',
+                completed: Boolean,
                 errors: []
             },
             methods: {
@@ -132,7 +150,7 @@
                     }
 
                     if (this.errors.length == 0) {
-                        let newActivityRecord = { when: this.whenLocal, howLong: this.howLong, type: this.type, digitalTraditional: this.digitalTraditional }
+                        let newActivityRecord = { when: this.whenLocal, howLong: this.howLong, type: this.type, digitalTraditional: this.digitalTraditional, notes: this.notes, completed: this.completed }
                         this.activityRecords.push(newActivityRecord)
                         this.activityRecords.sort(function (r1, r2) { return r1.when.getTime() - r2.when.getTime() })
                     }
@@ -170,7 +188,24 @@
                 },
                 shortDateFormat(date) {
                     return new Intl.DateTimeFormat().format(date)
+                },
+                //characterDisplayLimit(note, length, clamp) {    
+                truncate: function (text, length, suffix) {
+                    if (text.length > length) {
+                        return text.substring(0, length) + suffix;
+                    } else {
+                        return text;
+                    }
+                    // https://stackoverflow.com/questions/35070271/vue-js-components-how-to-truncate-the-text-in-the-slot-element-in-a-component
+                },
+                decimalPlaces: function(hours, decimalPlaces) {
+                    //let hours = [howLong, total, hoursByType]
+                   // for (let i=0; i<hours.length; i++) {
+                  //  return hours[i].toFixed(decimalPlaces)
+                   // }
+                   return hours.toFixed(decimalPlaces)
                 }
+
             }
         })
 
