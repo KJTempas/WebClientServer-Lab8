@@ -67,7 +67,7 @@
                 errors: []
             },
             methods: {
-                addStudent() {
+              /*  addStudent() { - orginal - works
                     this.errors = []
                     if (this.newStudentName && this.newStarID) {
                         let student = { name: this.newStudentName, starID: this.newStarID, present: false }
@@ -78,7 +78,25 @@
                     } else {
                         this.errors.push('Name and StarID are required.')
                     }
+                },*/
+
+
+                addStudent() {
+                    this.errors = []
+                    if (!this.newStudentName){
+                        this.errors.push('Name is required')
+                    }
+                    if (!this.newStarID) {
+                        this.errors.push('StarID is required')
+                    }
+                        let student = { name: this.newStudentName, starID: this.newStarID, present: false }
+                        this.students.push(student)
+                        this.students.sort(function (s1, s2) { return s1.name > s2.name ? 1 : -1 })
+                        this.newStudentName = ''
+                        this.newStarID = ''
+                    
                 },
+
                 checked(student) {
                     this.message = student.present ? 'Welcome, ' : 'Goodbye, '
                     this.mostRecentSignIn = student.name
