@@ -60,8 +60,8 @@
                     </div>
 
                    <div class="form-check-inline">
-                        <input id="complete" class="form-check-input" type="checkbox"v-model="completed">
-                        <label class="form-check-label" for="complete">Completed</label>
+                        <input id="completed" class="form-check-input" type="checkbox" v-model="completed">
+                        <label class="form-check-label" for="Completed">Completed</label>
                     </div>
 
                     <div>
@@ -91,10 +91,11 @@
                         <tr v-for="record in activityRecords">
                             <td>{{ record.when | shortDateFormat }}</td>
                             <td>{{ record.howLong  | decimalPlaces(2) }}</td>
+
                             <td>{{ record.type }}</td>
                             <td>{{ record.digitalTraditional }}</td>
-                           <td>{{ record.notes  | truncate( 40, '...') }}</td>
-                          <td>{{ record. completed }}</td>
+                            <td>{{ record.notes  | truncate( 40, '...') }}</td> <!-- will display max of 40 characters-->
+                            <td>{{ record.completed }}</td>
                         </tr>
                     </table>
                 </div>
@@ -111,7 +112,11 @@
                 
                 <!-- total for each type  -->
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item" v-for="hours, type in totalHoursByType">{{ type }}: {{ hours | decimalPlaces(2) }}</li>
+                   <li class="list-group-item" v-for="hours, type in totalHoursByType">{{ type }}: {{ hours | decimalPlaces(2) }}</li>
+                    <!-- above is original - all in one; below for testing-->
+                    <!--<li class="list-group-item" v-bind:class="'type-'+type in totalHoursByType"  v-for="hours, type in totalHoursByType">{{ type }}: {{ hours | decimalPlaces(2) }}</li>-->
+                    
+                    <!-- bootstrap - list-group-item-primary/info/success/warning    - kind of like buttons https://getbootstrap.com/docs/4.0/components/list-group/>  -->
                 </ul>
             </div>
         </div>
@@ -152,6 +157,10 @@
                         let newActivityRecord = { when: this.whenLocal, howLong: this.howLong, type: this.type, digitalTraditional: this.digitalTraditional, notes: this.notes, completed: this.completed }
                         this.activityRecords.push(newActivityRecord)
                         this.activityRecords.sort(function (r1, r2) { return r1.when.getTime() - r2.when.getTime() })
+                        //clear fields after adding activity
+                        this.when=''
+                        this.howLong=''
+                        this.notes=''
                     }
                 }
             }, computed: {
@@ -187,8 +196,7 @@
                 },
                 shortDateFormat(date) {
                     return new Intl.DateTimeFormat().format(date)
-                },
-                //characterDisplayLimit(notes, length, clamp) {    
+                },   
                 truncate: function (text, length, suffix) {
                     if (text.length > length) {
                         return text.substring(0, length) + suffix;
@@ -198,10 +206,6 @@
                     // https://stackoverflow.com/questions/35070271/vue-js-components-how-to-truncate-the-text-in-the-slot-element-in-a-component
                 },
                 decimalPlaces: function(hours, decimalPlaces) {
-                    //let hours = [howLong, total, hoursByType]
-                   // for (let i=0; i<hours.length; i++) {
-                  //  return hours[i].toFixed(decimalPlaces)
-                   // }
                    return hours.toFixed(decimalPlaces)
                 }
 
