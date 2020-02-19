@@ -6,10 +6,13 @@
 /* styles for different types -for display */
 .type-drawing {
     color: purple;
+    font-family: fantasy;
 }
 .type-sketching {
-    color: lightgreen
+    color: lightgreen;
+    font-weight: bold;
 }
 .type-painting {
-    color: lightskyblue
+    color: lightskyblue;
+    font-style: italic;
 }
