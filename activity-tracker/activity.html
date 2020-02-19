@@ -21,18 +21,18 @@
             <div class="card-body">
 
                 <form>
-
+                    <!--v-model links element in form to data in Vue model-->
                     <div class="alert alert-danger" v-show="errors && errors.length > 0">
                         <li v-for="error in errors">{{ error }}</li>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group"> <!-- the | comes before the filter defined in the Vue model-->
                         <label class="form-label" for="when">When did you {{ activity | lowercase }}?</label>
                         <input id="when" class="form-control" type="date" v-model.lazy="when">
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="howLong">How long did you practice for?</label>
+                        <label class="form-label" for="howLong">How long did you practice for, in hours?</label>
                         <input id="howLong" class="form-control" v-model.number.lazy="howLong">
                     </div>
 
@@ -43,7 +43,7 @@
                         </select>
                     </div>
 
-                    <div class="form-check-inline">
+                    <div class="form-check-inline"> <!--v-bind connects radio button values to the Vue data-->
                         <input id="v2" class="form-check-input" type="radio" v-bind:value="traditional" v-model="digitalTraditional">
                         <label class="form-check-label" for="v1">Traditional</label>
                     </div>
@@ -87,8 +87,8 @@
                             <th>Digital or traditional?</th>
                             <th>Notes</th>
                             <th>Completed</th>
-                        </tr>
-                        <tr v-for="record in activityRecords">
+                        </tr>  <!--table data pulled by looping through activityRecords objects-->
+                        <tr v-for="record in activityRecords" v-bind:class="'type-'+record.type">
                             <td>{{ record.when | shortDateFormat }}</td>
                             <td>{{ record.howLong  | decimalPlaces(2) }}</td>
 
@@ -113,9 +113,7 @@
                 <!-- total for each type  -->
                 <ul class="list-group list-group-flush">
                    <li class="list-group-item" v-for="hours, type in totalHoursByType">{{ type }}: {{ hours | decimalPlaces(2) }}</li>
-                    <!-- above is original - all in one; below for testing-->
-                    <!--<li class="list-group-item" v-bind:class="'type-'+type in totalHoursByType"  v-for="hours, type in totalHoursByType">{{ type }}: {{ hours | decimalPlaces(2) }}</li>-->
-                    
+                
                     <!-- bootstrap - list-group-item-primary/info/success/warning    - kind of like buttons https://getbootstrap.com/docs/4.0/components/list-group/>  -->
                 </ul>
             </div>
@@ -125,10 +123,10 @@
 
     <script>
 
-        let app = new Vue({
+        let app = new Vue({ //creating a new Vue app
             el: "#app",
             data: {
-                activity: 'Practice Art',  // If you like, replace in your own activity name e.g. studying, running, playing video games.... 
+                activity: 'Practice Art',  // Can replace w your own activity name e.g. studying, running, .... 
                 when: '',
                 howLong: 1,
                 type: 'sketching',
@@ -143,7 +141,7 @@
             },
             methods: {
                 submit() {     
-                    this.errors = []
+                    this.errors = []  //errors are added to this array
 
                     if (this.whenLocal == 'Invalid Date' || this.whenLocal.getTime() > new Date().getTime()) {
                         this.errors.push('Select a valid date, today or in the past')
@@ -154,6 +152,7 @@
                     }
 
                     if (this.errors.length == 0) {
+                        //creating a new activity record object
                         let newActivityRecord = { when: this.whenLocal, howLong: this.howLong, type: this.type, digitalTraditional: this.digitalTraditional, notes: this.notes, completed: this.completed }
                         this.activityRecords.push(newActivityRecord)
                         this.activityRecords.sort(function (r1, r2) { return r1.when.getTime() - r2.when.getTime() })
@@ -190,7 +189,7 @@
                     })
                     return hoursByType
                 }
-            }, filters: {
+            }, filters: { //these are applied to elements in the template
                 lowercase(string) {
                     return string.toLowerCase()
                 },

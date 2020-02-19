@@ -2,3 +2,14 @@
     max-height: 250px;
     overflow: scroll;
 }
+
+/* styles for different types -for display */
+.type-drawing {
+    color: purple;
+}
+.type-sketching {
+    color: lightgreen
+}
+.type-painting {
+    color: lightskyblue
+}
