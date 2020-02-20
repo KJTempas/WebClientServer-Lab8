@@ -23,12 +23,15 @@
                 <form>
                     <!--v-model links element in form to data in Vue model-->
                     <div class="alert alert-danger" v-show="errors && errors.length > 0">
+                        <!--use v-for to loop through errors, printing each one-->
                         <li v-for="error in errors">{{ error }}</li>
                     </div>
 
                     <div class="form-group"> <!-- the | comes before the filter defined in the Vue model-->
+                                       <!-- | lowercase calls filter on activity-->
                         <label class="form-label" for="when">When did you {{ activity | lowercase }}?</label>
                         <input id="when" class="form-control" type="date" v-model.lazy="when">
+                        <!--.lazy means data updates after a change event(when user navigates away from element), rather than as being type by user-->
                     </div>
 
                     <div class="form-group">
@@ -39,10 +42,11 @@
                     <div class="form-group">
                         <label class="form-label" for="type">What type?</label>
                         <select class="form-control" v-model="type">
+                            <!--use v-for to create one option element for each type in the types array-->
                             <option v-for="type in types" v-bind:value="type">{{ type }}</option>
                         </select>
                     </div>
-
+                    <!-- both radio buttons share same v-model, so when one is selected, other will de-select-->
                     <div class="form-check-inline"> <!--v-bind connects radio button values to the Vue data-->
                         <input id="v2" class="form-check-input" type="radio" v-bind:value="traditional" v-model="digitalTraditional">
                         <label class="form-check-label" for="v1">Traditional</label>
@@ -66,6 +70,7 @@
 
                     <div>
                         <button class="btn btn-primary mt-2" type="button" v-on:click="submit">Add record</button>
+                        <!--note: don't need .prevent because button type is "button", so browser doesn't try to submit the form-->
                     </div>
 
                 </form>
@@ -89,12 +94,13 @@
                             <th>Completed</th>
                         </tr>  <!--table data pulled by looping through activityRecords objects-->
                         <tr v-for="record in activityRecords" v-bind:class="'type-'+record.type">
+                            <!-- filters |shortDateFormat and |decimal Places are applied to data-->
                             <td>{{ record.when | shortDateFormat }}</td>
                             <td>{{ record.howLong  | decimalPlaces(2) }}</td>
 
                             <td>{{ record.type }}</td>
                             <td>{{ record.digitalTraditional }}</td>
-                            <td>{{ record.notes  | truncate( 40, '...') }}</td> <!-- will display max of 40 characters-->
+                            <td>{{ record.notes  | truncate( 40, '...') }}</td> <!-- will display max of 40 characters, then ...-->
                             <td>{{ record.completed }}</td>
                         </tr>
                     </table>
@@ -132,8 +138,8 @@
                 type: 'sketching',
                 digitalTraditional: 'traditional',   // you may wish to rename this 
                 activityRecords: [],
-                types: ['sketching', 'drawing', 'painting'],    // replace with appropriate options for your activity e.g. for video game, ['PC', 'PlayStation', 'Xbox' ]
-                digital: 'digital',          // on a computer, tablet                // replace with appropriate options for your activity e.g. for video games, single player and multi player 
+                types: ['sketching', 'drawing', 'painting'],     
+                digital: 'digital',          // on a computer, tablet                
                 traditional: 'traditional',   // painting, drawing etc. on paper
                 notes: '',
                 completed: false,
@@ -152,9 +158,10 @@
                     }
 
                     if (this.errors.length == 0) {
-                        //creating a new activity record object
+                        //creating a new activity record object - if not errors are found
                         let newActivityRecord = { when: this.whenLocal, howLong: this.howLong, type: this.type, digitalTraditional: this.digitalTraditional, notes: this.notes, completed: this.completed }
                         this.activityRecords.push(newActivityRecord)
+                        //.sort compares pairs 
                         this.activityRecords.sort(function (r1, r2) { return r1.when.getTime() - r2.when.getTime() })
                         //clear fields after adding activity
                         this.when=''
@@ -162,7 +169,7 @@
                         this.notes=''
                     }
                 }
-            }, computed: {
+            }, computed: { //computed properties are calculated from data properties - if data updates, computed property updates automatically
                 whenLocal() {
                     let date = new Date(this.when)
                     let timestamp = date.getTime() + (date.getTimezoneOffset() * 60 * 1000)
@@ -172,6 +179,7 @@
                 totalHours() {
                     let total = 0
                     if (this.activityRecords.length > 0) {
+                        //reduce method calculates total
                         total = this.activityRecords.reduce(function (hoursAccumulator, currentRecord) {
                             return hoursAccumulator + currentRecord.howLong
                         }, 0)
