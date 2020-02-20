@@ -2,6 +2,7 @@
 
 /* https://vuejs.org/v2/guide/transitions.html */
 
+/* these are Vue's classes for CSS transitions - elements fade in/out of Vue - not so abrupt */
 .fade-enter-active, .fade-leave-active {
     transition: opacity .5s;
 }
@@ -15,7 +16,7 @@
     overflow: scroll;
 }
 
-.present {
+.present { /* different styles for present and absent classes*/
     color: gray;
     font-style: italic;
 }
